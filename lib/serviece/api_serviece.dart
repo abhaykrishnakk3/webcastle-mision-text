@@ -2,15 +2,23 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:mision_text_webcastle/model/all_data_model.dart';
 import 'package:mision_text_webcastle/serviece/api_endpoints.dart';
 
-class ApiServices {
+class ApiServices extends ChangeNotifier {
+  ApiServices() {
+   getallFunction();
+  }
   final dio = Dio();
   final endpoints = ApiEndPoints();
   String accessToken = "";
 
+  bool check = false;
+
   AllData? alldatamodel;
+
+ 
 
   Future<String> anonymousLogin() async {
     try {
@@ -39,7 +47,7 @@ class ApiServices {
           options: Options(headers: {
             "authorization": "Bearer $token",
           }));
-     
+
       return AllData.fromJson(response.data);
     } catch (e) {
       if (e is DioException) {
@@ -52,7 +60,11 @@ class ApiServices {
   }
 
   getallFunction() async {
+    // check = false;
     alldatamodel = await getAllData();
+    check = true;
+    log(check.toString());
+    notifyListeners();
     log(alldatamodel!.data.homeFields[0].carouselItems![0].image.toString());
   }
 }
